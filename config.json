@@ -1,0 +1,15 @@
+{
+  "triggerWords": [
+    "бот",
+    "bot",
+    "ии",
+	"зайка"
+  ],
+  "permission": "user.ai.chat",
+  "cooldown": 10,
+  "apiKey": "ВАШ_КЛЮЧ_СЮДА",
+  "model": "ВАША_МОДЕЛЬКА",
+  "prompt": "Ты — полезный ИИ-бот в игре Minecraft. Отвечай коротко и дружелюбно.",
+  "maxTokens": 100,
+  "temperature": 0.7
+}

@@ -1,0 +1,54 @@
+{
+  "name": "ai-chat",
+  "version": "1.1.2",
+  "description": "Конфигурируемый ИИ-бот с гибкими настройками. С использованием OpenRouter-Kit",
+  "main": "index.js",
+  "author": "I_Sahorok",
+  "botpanel": {
+    "categories": [
+      "Чат"
+    ],
+    "icon": "brain",
+    "dependencies": {
+      "parser-keksik": "*"
+    },
+    "settings": {
+      "aiConfig": {
+        "type": "json_file",
+        "label": "Основная конфигурация ИИ",
+        "description": "Ключевые параметры: триггеры, права, кд, API-ключ, модель, промпт.",
+        "defaultPath": "config.json"
+      },
+      "thinkingMessage": {
+        "type": "string",
+        "label": "Сообщение 'ИИ думает'",
+        "description": "Отправляется, если игрок пытается задать вопрос, пока ИИ обрабатывает предыдущий.",
+        "default": "Думаю над вашим вопросом..."
+      },
+      "cooldownMessage": {
+        "type": "string",
+        "label": "Сообщение о кд",
+        "description": "Используйте {timeLeft} для подстановки оставшегося времени в секундах.",
+        "default": "Подождите еще {timeLeft} сек."
+      },
+      "noPromptMessage": {
+        "type": "string",
+        "label": "Ответ на пустой запрос",
+        "description": "Ответ бота, если игрок написал только триггер без вопроса.",
+        "default": "Я вас слушаю. Какой у вас вопрос?"
+	  },
+	  "useHistory": {
+        "type": "boolean",
+        "label": "Включить историю диалога",
+        "description": "Позволяет ИИ помнить предыдущие вопросы от игрока.",
+        "default": true
+      },
+      "clearBadSymbols": {
+        "type": "boolean",
+        "label": "Очищать ответ от эмодзи",
+        "description": "Удаляет эмодзи и другие не-текстовые символы из ответа ИИ.",
+        "default": true
+      }
+    }
+  }
+}
