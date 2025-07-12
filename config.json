@@ -3,7 +3,7 @@
     "бот",
     "bot",
     "ии",
-	"зайка"
+    "зайка"
   ],
   "permission": "user.ai.chat",
   "cooldown": 10,
