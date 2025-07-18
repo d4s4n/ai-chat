@@ -16,7 +16,7 @@
       "aiConfig": {
         "type": "json_file",
         "label": "Основная конфигурация ИИ",
-        "description": "Ключевые параметры: триггеры, права, кд, API-ключ, модель, промпт.",
+        "description": "Ключевые параметры: триггеры, права, кд, API-ключ, модель, промпт. (ПРИМЕЧАНИЕ! API брать на openrouter.ai).",
         "defaultPath": "config.json"
       },
       "thinkingMessage": {
