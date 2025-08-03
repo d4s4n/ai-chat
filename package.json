@@ -1,52 +1,61 @@
 {
   "name": "ai-chat",
-  "version": "1.1.3",
-  "description": "Конфигурируемый ИИ-бот с гибкими настройками. С использованием OpenRouter-Kit",
+  "version": "2.0.0",
+  "description": "Конфигурируемый ИИ-бот с поддержкой нескольких провайдеров (OpenRouter, Google AI).",
   "main": "index.js",
-  "author": "I_Sahorok",
+  "author": "I_Sahorok/merka",
+  "dependencies": {
+    "google-ai-kit": "^1.0.4",
+    "openrouter-kit": "^0.1.65"
+  },
   "botpanel": {
     "categories": [
       "Чат"
     ],
-    "icon": "brain",
+    "icon": "brain-circuit",
     "dependencies": {
       "parser-keksik": "*"
     },
     "settings": {
-      "aiConfig": {
+      "aiProviderConfig": {
         "type": "json_file",
-        "label": "Основная конфигурация ИИ",
-        "description": "Ключевые параметры: триггеры, права, кд, API-ключ, модель, промпт. (ПРИМЕЧАНИЕ! API брать на openrouter.ai).",
+        "label": "Конфигурация AI",
+        "description": "Основной файл настроек: выбор провайдера, ключи, модели и т.д.",
         "defaultPath": "config.json"
+      },
+      "allowedChatTypes": {
+        "type": "string[]",
+        "label": "Разрешенные типы чатов",
+        "description": "Типы чатов, в которых бот будет отвечать (например, clan, chat, global).",
+        "default": [
+          "clan",
+          "chat"
+        ]
       },
       "thinkingMessage": {
         "type": "string",
         "label": "Сообщение 'ИИ думает'",
-        "description": "Отправляется, если игрок пытается задать вопрос, пока ИИ обрабатывает предыдущий.",
         "default": "Думаю над вашим вопросом..."
       },
       "cooldownMessage": {
         "type": "string",
-        "label": "Сообщение о кд",
-        "description": "Используйте {timeLeft} для подстановки оставшегося времени в секундах.",
+        "label": "Сообщение о кулдауне",
+        "description": "Используйте {timeLeft} для подстановки оставшегося времени.",
         "default": "Подождите еще {timeLeft} сек."
       },
       "noPromptMessage": {
         "type": "string",
         "label": "Ответ на пустой запрос",
-        "description": "Ответ бота, если игрок написал только триггер без вопроса.",
         "default": "Я вас слушаю. Какой у вас вопрос?"
-	  },
-	  "useHistory": {
+      },
+      "useHistory": {
         "type": "boolean",
         "label": "Включить историю диалога",
-        "description": "Позволяет ИИ помнить предыдущие вопросы от игрока.",
         "default": true
       },
       "clearBadSymbols": {
         "type": "boolean",
         "label": "Очищать ответ от эмодзи",
-        "description": "Удаляет эмодзи и другие не-текстовые символы из ответа ИИ.",
         "default": true
       }
     }
