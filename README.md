@@ -71,7 +71,7 @@ https://aistudio.google.com/apikey
         "ВАШ_КЛЮЧ_GOOGLE_AI_1",
         "ВАШ_КЛЮЧ_GOOGLE_AI_2"
       ],
-      "model": "gemini-1.5-flash-preview-05-20",
+      "model": "gemini-2.5-flash",
       "maxTokens": 150,
       "temperature": 0.8,
       "proxy": {
