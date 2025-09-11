@@ -103,6 +103,7 @@ function createChatHandler(bot, settings, config, aiClient) {
         } catch (error) {
             bot.sendLog(`[plugin:ai-chat] Ошибка API: ${error.message}`);
             bot.api.sendMessage(type, 'Извините, у меня возникли технические неполадки.', username);
+            console.log(error);
         } finally {
             // Устанавливаем кулдаун только для пользователей без права user.ainocd
             if (!hasNoCooldownPermission) {
