@@ -1,18 +1,12 @@
+const { PERMISSIONS, MESSAGES } = require('../constants');
 const { clearBadSymbols } = require('../utils/textUtils.js');
 
-function createChatHandler(bot, settings, config, aiClient) {
+function createChatHandler(bot, settings, config, aiClient, store, promptsData) {
     const cooldowns = new Map();
     const processingUsers = new Set();
     const triggerWords = (config.triggerWords || []).map(w => w.toLowerCase());
     const allowedChatTypes = settings.allowedChatTypes || ['clan', 'chat'];
 
-    /**
-     * Заменяет плейсхолдеры в промпте
-     * @param {string} prompt - Исходный промпт
-     * @param {string} username - Имя пользователя
-     * @param {string} chatType - Тип чата (clan, chat, global)
-     * @returns {string} Промпт с замененными плейсхолдерами
-     */
     function replacePlaceholders(prompt, username, chatType) {
         const now = new Date();
         const time = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
@@ -47,9 +41,8 @@ function createChatHandler(bot, settings, config, aiClient) {
         const user = await bot.api.getUser(username);
         if (!user) return;
 
-        // Проверяем права пользователя
-        const hasAiPermission = user.hasPermission('user.ai');
-        const hasNoCooldownPermission = user.hasPermission('user.ainocd');
+        const hasAiPermission = user.hasPermission(PERMISSIONS.AI);
+        const hasNoCooldownPermission = user.hasPermission(PERMISSIONS.AI_NOCD);
         
         if (!hasAiPermission && !hasNoCooldownPermission) return;
 
@@ -58,7 +51,6 @@ function createChatHandler(bot, settings, config, aiClient) {
             return;
         }
 
-        // Проверяем кулдаун только для пользователей без права user.ainocd
         if (!hasNoCooldownPermission) {
             const now = Date.now();
             const lastUsed = cooldowns.get(userKey) || 0;
@@ -81,7 +73,9 @@ function createChatHandler(bot, settings, config, aiClient) {
         processingUsers.add(userKey);
 
         try {
-            let systemPrompt = config.prompt || "Ты — полезный ИИ-бот в игре Minecraft. Отвечай коротко и дружелюбно.";
+            const modeKey = `ai:mode:${userKey}`;
+            const mode = store ? await store.get(modeKey) || 'default' : 'default';
+            let systemPrompt = promptsData[mode] || promptsData.default || MESSAGES.FALLBACK_PROMPT;
             systemPrompt = replacePlaceholders(systemPrompt, username, type);
 
             const botResponseContent = await aiClient.chat(prompt, username, systemPrompt);
@@ -101,12 +95,11 @@ function createChatHandler(bot, settings, config, aiClient) {
             bot.api.sendMessage(type, botResponse, username);
 
         } catch (error) {
-            bot.sendLog(`[plugin:ai-chat] Ошибка API: ${error.message}`);
+            bot.sendLog(`[ai-chat] Ошибка API: ${error.message}`);
             bot.api.sendMessage(type, 'Извините, у меня возникли технические неполадки.', username);
             console.log(error);
         } finally {
-            // Устанавливаем кулдаун только для пользователей без права user.ainocd
-            if (!hasNoCooldownPermission) {
+            if (!user.hasPermission(PERMISSIONS.AI_NOCD)) {
                 cooldowns.set(userKey, Date.now());
             }
             processingUsers.delete(userKey);

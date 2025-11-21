@@ -6,20 +6,12 @@
     "ии"
   ],
   "cooldown": 10,
-  "prompt": "Ты — полезный ИИ-бот в игре Minecraft. Сейчас {time}, игрок {username} обращается к тебе в чате {chatType}. Отвечай коротко и дружелюбно",
   "providers": {
     "openrouter": {
       "apiKey": "ВАШ_КЛЮЧ_OPENROUTER",
       "model": "google/gemini-2.5-flash",
       "maxTokens": 100,
-      "temperature": 0.7,
-      "proxy": {
-        "enabled": false,
-        "host": "proxy.example.com",
-        "port": "8080",
-        "user": "",
-        "pass": ""
-      }
+      "temperature": 0.7
     },
     "google": {
       "apiKeys": [
@@ -27,14 +19,7 @@
       ],
       "model": "gemini-2.5-flash",
       "maxTokens": 150,
-      "temperature": 0.8,
-      "proxy": {
-        "enabled": false,
-        "host": "proxy.example.com",
-        "port": "8080",
-        "user": "",
-        "pass": ""
-      }
+      "temperature": 0.8
     }
   }
 }

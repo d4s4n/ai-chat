@@ -1,12 +1,12 @@
 {
   "name": "ai-chat",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "description": "Конфигурируемый ИИ-бот с поддержкой нескольких провайдеров (OpenRouter, Google AI).",
   "main": "index.js",
   "author": "I_Sahorok/merka",
   "dependencies": {
     "google-ai-kit": "^1.0.4",
-    "openrouter-kit": "^0.1.65"
+    "openrouter-kit": "^0.1.80"
   },
   "botpanel": {
     "categories": [
@@ -17,11 +17,23 @@
       "parser-keksik": "*"
     },
     "settings": {
+      "proxy": {
+        "type": "proxy",
+        "label": "Прокси для AI запросов",
+        "description": "Выберите прокси из списка или настройте вручную для запросов к AI провайдеру.",
+        "default": { "enabled": false }
+      },
       "aiProviderConfig": {
         "type": "json_file",
         "label": "Конфигурация AI",
         "description": "Основной файл настроек: выбор провайдера, ключи, модели и т.д.",
         "defaultPath": "config.json"
+      },
+      "prompts": {
+        "type": "json_file",
+        "label": "Промпты режимов",
+        "description": "Системные промпты для режимов ИИ. Ключ — имя режима, значение — промпт.",
+        "defaultPath": "config/prompts.json"
       },
       "allowedChatTypes": {
         "type": "string[]",

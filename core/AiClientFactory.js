@@ -1,34 +1,35 @@
+const fs = require('fs');
 const { OpenRouterClient, MemoryHistoryStorage } = require('openrouter-kit');
 const { GeminiClient } = require('google-ai-kit');
 const ProxyValidator = require('./ProxyValidator.js');
 
 class AiClientFactory {
-    static createClient(config, useHistory) {
+    static createClient(config, useHistory, proxyConfig) {
         const { provider, providers } = config;
         if (!provider || !providers || !providers[provider]) {
             throw new Error(`Провайдер "${provider}" не найден или не сконфигурирован.`);
         }
 
-        const providerConfig = providers[provider];
-
-        if (providerConfig.proxy) {
-            const validation = ProxyValidator.validate(providerConfig.proxy);
+        if (proxyConfig?.enabled) {
+            const validation = ProxyValidator.validate(proxyConfig);
             if (!validation.isValid) {
-                throw new Error(`Ошибка конфигурации прокси для ${provider}: ${validation.message}`);
+                throw new Error(`Ошибка конфигурации прокси: ${validation.message}`);
             }
         }
 
+        const providerConfig = providers[provider];
+
         switch (provider) {
             case 'openrouter':
-                return this._createOpenRouterAdapter(providerConfig, useHistory);
+                return this._createOpenRouterAdapter(providerConfig, useHistory, proxyConfig);
             case 'google':
-                return this._createGoogleAiAdapter(providerConfig, useHistory);
+                return this._createGoogleAiAdapter(providerConfig, useHistory, proxyConfig);
             default:
                 throw new Error(`Неподдерживаемый провайдер: ${provider}`);
         }
     }
 
-    static _createOpenRouterAdapter(config, useHistory) {
+    static _createOpenRouterAdapter(config, useHistory, proxyConfig) {
         if (!config.apiKey) throw new Error('API ключ для OpenRouter не указан.');
         
         const clientConfig = {
@@ -37,8 +38,8 @@ class AiClientFactory {
             historyAdapter: useHistory ? new MemoryHistoryStorage() : undefined,
         };
 
-        if (config.proxy && config.proxy.enabled) {
-            const proxyObject = ProxyValidator.createProxyObject(config.proxy);
+        if (proxyConfig?.enabled) {
+            const proxyObject = ProxyValidator.createProxyObject(proxyConfig);
             if (proxyObject) {
                 clientConfig.proxy = proxyObject;
             }
@@ -61,7 +62,7 @@ class AiClientFactory {
         };
     }
 
-    static _createGoogleAiAdapter(config, useHistory) {
+    static _createGoogleAiAdapter(config, useHistory, proxyConfig) {
         if (!config.apiKeys || config.apiKeys.length === 0) {
             throw new Error('API ключи для Google AI не указаны.');
         }
@@ -72,8 +73,8 @@ class AiClientFactory {
             messageStoreConfig: useHistory ? { type: 'memory' } : undefined,
         };
 
-        if (config.proxy && config.proxy.enabled) {
-            const proxyObject = ProxyValidator.createProxyObject(config.proxy);
+        if (proxyConfig?.enabled) {
+            const proxyObject = ProxyValidator.createProxyObject(proxyConfig);
             if (proxyObject) {
                 clientConfig.proxy = proxyObject;
             }
