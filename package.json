@@ -1,21 +1,18 @@
 {
   "name": "ai-chat",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "description": "Конфигурируемый ИИ-бот с поддержкой нескольких провайдеров (OpenRouter, Google AI).",
   "main": "index.js",
   "author": "I_Sahorok/merka",
   "dependencies": {
-    "google-ai-kit": "^1.0.4",
-    "openrouter-kit": "^0.1.80"
+    "google-ai-kit": "*",
+    "openrouter-kit": "*"
   },
   "botpanel": {
     "categories": [
       "Чат"
     ],
     "icon": "brain-circuit",
-    "dependencies": [
-      "parser-keksik"
-    ],
     "settings": {
       "proxy": {
         "type": "proxy",
