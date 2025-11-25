@@ -40,11 +40,16 @@ async function onLoad(bot, options) {
                 name: PERMISSIONS.GPTMODE,
                 description: 'Управление режимами ИИ-чата',
                 owner: PLUGIN_OWNER_ID
+            },
+            {
+                name: PERMISSIONS.AI_NEARBY,
+                description: 'Доступ к общению с ИИ-ботом при нахождении рядом',
+                owner: PLUGIN_OWNER_ID
             }
         ]);
 
         if (bot.api.installedPlugins.includes('clan-role-manager')) {
-            await bot.api.addPermissionsToGroup('Member', [PERMISSIONS.AI]);
+            await bot.api.addPermissionsToGroup('Member', [PERMISSIONS.AI, PERMISSIONS.AI_NEARBY]);
         }
 
         await bot.api.addPermissionsToGroup('Admin', [PERMISSIONS.AI_NOCD, PERMISSIONS.GPTMODE]);

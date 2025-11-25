@@ -3,7 +3,8 @@ const PLUGIN_OWNER_ID = 'plugin:ai-chat';
 const PERMISSIONS = {
     AI: 'user.ai',
     AI_NOCD: 'user.ainocd',
-    GPTMODE: 'admin.gpt'
+    GPTMODE: 'admin.gpt',
+    AI_NEARBY: 'user.ai.nearby'
 };
 
 const MESSAGES = {

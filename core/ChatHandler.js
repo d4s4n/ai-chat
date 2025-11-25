@@ -6,12 +6,14 @@ function createChatHandler(bot, settings, config, aiClient, store, promptsData) 
     const processingUsers = new Set();
     const triggerWords = (config.triggerWords || []).map(w => w.toLowerCase());
     const allowedChatTypes = settings.allowedChatTypes || ['clan', 'chat'];
+    const nearbyChatEnabled = settings.nearbyChat || false;
+    const nearbyChatRadius = settings.nearbyChatRadius || 4;
 
     function replacePlaceholders(prompt, username, chatType) {
         const now = new Date();
         const time = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
         const date = now.toLocaleDateString('ru-RU');
-        
+
         return prompt
             .replace(/{username}/g, username)
             .replace(/{user}/g, username)
@@ -19,6 +21,26 @@ function createChatHandler(bot, settings, config, aiClient, store, promptsData) 
             .replace(/{time}/g, time)
             .replace(/{date}/g, date)
             .replace(/{datetime}/g, `${date} ${time}`);
+    }
+
+    function isPlayerLookingAtBot(playerEntity) {
+        if (!playerEntity || !bot.entity) return false;
+
+        const dx = bot.entity.position.x - playerEntity.position.x;
+        const dy = bot.entity.position.y - playerEntity.position.y;
+        const dz = bot.entity.position.z - playerEntity.position.z;
+        const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+        if (distance > nearbyChatRadius) return false;
+
+        const angleToBot = Math.atan2(-dx, -dz);
+        const playerYaw = playerEntity.yaw;
+
+        let angleDiff = Math.abs(angleToBot - playerYaw);
+        angleDiff = Math.min(angleDiff, 2 * Math.PI - angleDiff);
+
+        const lookingThreshold = Math.PI / 4;
+        return angleDiff < lookingThreshold;
     }
 
     return async (data) => {
@@ -36,15 +58,27 @@ function createChatHandler(bot, settings, config, aiClient, store, promptsData) 
         const userKey = username.toLowerCase();
 
         const foundTrigger = triggerWords.find(trigger => lowerMessage.startsWith(trigger));
-        if (!foundTrigger) return;
 
         const user = await bot.api.getUser(username);
         if (!user) return;
 
         const hasAiPermission = user.hasPermission(PERMISSIONS.AI);
         const hasNoCooldownPermission = user.hasPermission(PERMISSIONS.AI_NOCD);
-        
-        if (!hasAiPermission && !hasNoCooldownPermission) return;
+        const hasNearbyPermission = user.hasPermission(PERMISSIONS.AI_NEARBY);
+
+        let isNearbyInteraction = false;
+        if (!foundTrigger && nearbyChatEnabled && hasNearbyPermission) {
+            const playerEntity = bot.players[username]?.entity;
+            if (playerEntity && isPlayerLookingAtBot(playerEntity)) {
+                isNearbyInteraction = true;
+            } else {
+                return;
+            }
+        } else if (!foundTrigger) {
+            return;
+        }
+
+        if (!isNearbyInteraction && !hasAiPermission && !hasNoCooldownPermission) return;
 
         if (processingUsers.has(userKey)) {
             bot.api.sendMessage(type, settings.thinkingMessage, username);
@@ -64,7 +98,13 @@ function createChatHandler(bot, settings, config, aiClient, store, promptsData) 
             }
         }
 
-        const prompt = message.substring(foundTrigger.length).trim();
+        let prompt;
+        if (isNearbyInteraction) {
+            prompt = message.trim();
+        } else {
+            prompt = message.substring(foundTrigger.length).trim();
+        }
+
         if (!prompt) {
             bot.api.sendMessage(type, settings.noPromptMessage, username);
             return;

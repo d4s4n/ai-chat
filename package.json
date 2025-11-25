@@ -1,6 +1,6 @@
 {
   "name": "ai-chat",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "Конфигурируемый ИИ-бот с поддержкой нескольких провайдеров (OpenRouter, Google AI).",
   "main": "index.js",
   "author": "I_Sahorok/merka",
@@ -69,6 +69,18 @@
         "type": "boolean",
         "label": "Очищать ответ от эмодзи",
         "default": true
+      },
+      "nearbyChat": {
+        "type": "boolean",
+        "label": "Отвечать людям рядом",
+        "description": "Если человек рядом в N блоков и смотрит на бота, бот будет отвечать (требуется право доступа)",
+        "default": false
+      },
+      "nearbyChatRadius": {
+        "type": "number",
+        "label": "Радиус для общения рядом",
+        "description": "Расстояние в блоках, на котором бот будет отвечать смотрящим на него игрокам",
+        "default": 4
       }
     }
   },
